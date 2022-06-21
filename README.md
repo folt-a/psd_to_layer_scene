@@ -21,6 +21,8 @@ PSDのレイヤー構造・透明度を保持してGodotのシーンに変換し
 
 出力した画像を作成したシーンから読み込んでいます。
 
+**このアドオンはゲーム本体に含める必要はありません。**　（シーンと画像を作るだけなので）
+
 PSDの読み込みは、GDNative(Rust)内にて行われています。
 
 
@@ -52,13 +54,14 @@ textureが設定されていますが、UVが設定されていない状態に�
 
 Polygon2Dの上部メニューUVエディタより点を設定してください。
 
-![image](https://user-images.githubusercontent.com/32963227/174841959-43c44884-8c01-4d8b-b07d-b7120accbfd3.png)
+![174841959-43c44884-8c01-4d8b-b07d-b7120accbfd3](https://user-images.githubusercontent.com/32963227/174844863-65bfa0ba-2f85-4c2a-9662-e42b8e7f3c5f.png)
 
 「UV」ボタン
 
-![image](https://user-images.githubusercontent.com/32963227/174842114-98cb0de7-cf9f-4b23-a3fc-07ae66395fcd.png)
+![174842114-98cb0de7-cf9f-4b23-a3fc-07ae66395fcd](https://user-images.githubusercontent.com/32963227/174844891-8bf16c8b-add9-4c0a-b5e7-d3369acd41ec.png)
 
-とりあえず表示させています。よくわからないですがもっといい感じに割ってください。
+
+よくない割り方ですがとりあえず表示させています。
 
 > 参考: https://www.youtube.com/watch?v=irN6b8ESrH4
 
@@ -68,11 +71,12 @@ Polygon2Dの上部メニューUVエディタより点を設定してください
 
 これは、Spriteの上部メニューの「Polygon2Dに変換する」を使用するためのものです。
 
+![image](https://user-images.githubusercontent.com/32963227/174844245-f1b63e3e-3fc6-4f33-bb66-9548478e7fd7.png)
+
 1. 「Polygon2Dに変換する」を実行するとPolygon2Dに変換されます。
 2. Polygon2Dの上部メニューUVエディタにて「編集」→「UVをPolygon2Dにコピー」で正しい位置に配置されます。
 
-Spriteと同じ見え方の配置にするためには、SpriteのpositionとPolygon2Dのpositionはレイヤー画像の半分ずれているので、ずらして位置を調整しています。（苦しい）
-
+Spriteと同じ見え方の配置にするには、SpriteのpositionとPolygon2Dのpositionはレイヤー画像の半分ずれているので、ずらして位置を調整しています。（苦しい）
 
 
 ## 使い方
