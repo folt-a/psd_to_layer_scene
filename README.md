@@ -7,9 +7,103 @@ GodotEngine 3.4~ Addon.
 
 Convert PSD file to Godot scene with layers info and export layer Images.
 
+日本語のREADMEは下のほうにあります。(Japanese READ ME is below)
+
 ---
 
 ![psdtolayer2](https://user-images.githubusercontent.com/32963227/174835421-35970f7f-31a7-434b-965f-62e8206bb954.png)
+
+---
+
+
+## Overview
+
+add-on for Godot Engine.
+
+it converts PSD to Godot scene, keep PSD layer's tree and transparency
+
+Outputs the layer image to the directory specified by PNG, WebP, BMP.
+
+The output image read from the created scene.
+
+** This add-on does not need to be included in the game itself. ** 
+
+(Because it only creates scenes and images)
+
+reading PSD feature is in GDNative (Rust).
+
+## PSD to Godot
+
+Layers and layer groups in PSD are the hierarchy of the node tree.
+
+Layers smaller than the PSD canvas converts their position to Godot's position.
+
+The transparency of the layer goes into modulate.a.
+
+** Group transparency, filter, mask layer, layer composition mode, etc. are not supported. ** **
+
+## Import layer image as a Sprite node or Polygon 2D node
+### Sprite
+
+By default, layer images are converted to Sprite.
+
+### Polygon2D
+
+If you add ** _P ** to the end of the layer name, that layer will be converted to Polygon2D.
+
+This Polygon2D is not drawn when you open the exported scene.
+
+This is because the texture is set, but the UV is not set.
+
+Set a point from the UV editor on the top menu of Polygon2D.
+
+![174841959-43c44884-8c01-4d8b-b07d-b7120accbfd3](https://user-images.githubusercontent.com/32963227/174844863-65bfa0ba-2f85-4c2a-9662-e42b8e7f3c5f.png)
+
+"UV" button
+
+![174842114-98cb0de7-cf9f-4b23-a3fc-07ae66395fcd](https://user-images.githubusercontent.com/32963227/174844891-8bf16c8b-add9-4c0a-b5e7-d3369acd41ec.png)
+
+It's not a good way to polygon mesh, but I'm displaying it for the time being.
+
+> Reference: https://www.youtube.com/watch?v=irN6b8ESrH4
+
+### Convert from Sprite to Polygon2D
+
+If you add ** _AP ** to the end of the layer name, the layer will be converted to Sprite, but it will be placed at a slightly offset position.
+
+This is for using "Convert to Polygon 2D" in Sprite's top menu.
+
+![image](https://user-images.githubusercontent.com/32963227/174844245-f1b63e3e-3fc6-4f33-bb66-9548478e7fd7.png)
+
+1. Execute "Convert to Polygon2D" to convert to Polygon2D.
+2. In the upper menu UV editor of Polygon2D, select "Edit"-> "Copy UV to Polygon2D" to place it in the correct position.
+
+To get the same appearance as Sprite, the position of Sprite and the position of Polygon2D are shifted by half of the layer image, so the position is adjusted by shifting.
+
+
+## How to use
+
+The installation is the same as a normal Godot add-on.
+
+Arrange so that it becomes addons / psd_to_layer_scene. ☑ This add-on in Project Settings → Plugins.
+
+Windows and Linux. 
+
+Mac is not yet supported.
+
+The Rust panic error in PSD → image processing is written in Godot's Output tab.
+
+---
+
+thank you for GDNative（Rust）crate
+
+https://github.com/folt-a/psd_to_layer_scene/blob/native/LICENSE.json
+
+---
+
+LICENSE　MIT
+
+---
 
 ## このアドオンについて
 
