@@ -187,21 +187,21 @@ func set_layer_node(json_value: Dictionary):
 		layer_node = Polygon2D.new()
 		top = json_value.top
 		left = json_value.left
-		var skelton := Skeleton2D.new()
-		var skelton_top: float = json_value.top + (float(json_value.height) / 2.0)
-		var skelton_left: float = json_value.left + (float(json_value.width) / 2.0)
-		skelton.position = Vector2(skelton_left, skelton_top)
-		skelton.rotation_degrees = 0.0
-		skelton.name = "Skelton_" + json_value.name + json_value.path.replace("/", "_")
-		var bone_1 := Bone2D.new()
-		bone_1.name = "Bone_" + json_value.name
-		bone_1.rotation_degrees = -90.0
-		skelton.add_child(bone_1)
-		_root_node_2d.get_node("Bones").add_child(skelton)
+#		var skelton := Skeleton2D.new()
+#		var skelton_top: float = json_value.top + (float(json_value.height) / 2.0)
+#		var skelton_left: float = json_value.left + (float(json_value.width) / 2.0)
+#		skelton.position = Vector2(skelton_left, skelton_top)
+#		skelton.rotation_degrees = 0.0
+#		skelton.name = "Skelton_" + json_value.name + json_value.path.replace("/", "_")
+#		var bone_1 := Bone2D.new()
+#		bone_1.name = "Bone_" + json_value.name
+#		bone_1.rotation_degrees = -90.0
+#		skelton.add_child(bone_1)
+#		_root_node_2d.get_node("Bones").add_child(skelton)
 		parent_node.add_child(layer_node)
-		layer_node.skeleton = layer_node.get_path_to(skelton)
-		bone_1.set_owner(_root_node_2d)
-		skelton.set_owner(_root_node_2d)
+#		layer_node.skeleton = layer_node.get_path_to(skelton)
+#bone_1.set_owner(_root_node_2d)
+#		skelton.set_owner(_root_node_2d)
 	else:
 		layer_node = Sprite.new()
 		top = json_value.top + (float(json_value.height) / 2.0)
