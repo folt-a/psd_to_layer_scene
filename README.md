@@ -58,11 +58,13 @@ Spriteと同じ見え方の配置にするためには、SpriteのpositionとPol
 
 addons/psd_to_layer_scene となるように配置します。
 
-
-
 Windows, LinuxのみGDNativeを書き出しているのでMacは非対応です。
-Macのネイティブ部分のビルドがめんどくさいのでやっていません。
 
+
+---
+
+GDNative（Rust）使用crate
+https://github.com/folt-a/psd_to_layer_scene/blob/native/LICENSE.json
 
 ---
 
