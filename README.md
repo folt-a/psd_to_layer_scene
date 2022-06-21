@@ -1,10 +1,16 @@
 # PSD To Layer Scene (GodotEngine addon)
 
+![psdtolayer](https://user-images.githubusercontent.com/32963227/174834872-9b256891-c9ff-455a-9e10-6a7f06fe4c03.png)
+
+
 GodotEngine 3.4~ Addon.
 
 Convert PSD file to Godot scene with layers info and export layer Images.
 
 ---
+
+![psdtolayer2](https://user-images.githubusercontent.com/32963227/174835421-35970f7f-31a7-434b-965f-62e8206bb954.png)
+
 
 GodotEngineのアドオンです。
 
@@ -20,9 +26,9 @@ PSDでのレイヤー・レイヤーグループはノードツリーの階層�
 
 PSDキャンバスサイズより小さいレイヤーは、その位置をGodotのpositionに変換され、配置されます。
 
-透明度はmodulate.a に入ります。
+レイヤーの透明度はmodulate.a に入ります。
 
-マスクレイヤー・レイヤーの合成モードなどは非対応です。
+**グループの透明度・塗り・フィルター・マスクレイヤー・レイヤーの合成モードなどは非対応です。**
 
 
 
@@ -46,7 +52,7 @@ Spriteと同じ見え方の配置にするためには、SpriteのpositionとPol
 
 
 
-使い方
+## 使い方
 
 ふつうのアドオンと同じです。
 
