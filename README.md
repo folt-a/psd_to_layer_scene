@@ -38,24 +38,40 @@ PSDキャンバスサイズより小さいレイヤーは、その位置をGodot
 
 
 ## レイヤー画像をSpriteノードまたはPolygon2Dノードとして読み込む
+### Sprite
 
 デフォルトではレイヤー画像はSpriteに変換されます。
 
-ただし、レイヤー名の末尾に **_P** とつけると、そのレイヤーはPolygon2Dに変換されます。
+### Polygon2D
 
-このPolygon2Dは、シーンを開いた状態では描画されていません。Polygon2Dの上部メニューUVエディタより点を設定してください。
+レイヤー名の末尾に **_P** とつけると、そのレイヤーはPolygon2Dに変換されます。
+
+このPolygon2Dは、シーンを開いた状態では描画されていません。
 
 textureが設定されていますが、UVが設定されていない状態になっているためです。
 
+Polygon2Dの上部メニューUVエディタより点を設定してください。
 
+![image](https://user-images.githubusercontent.com/32963227/174841959-43c44884-8c01-4d8b-b07d-b7120accbfd3.png)
 
-また、レイヤー名の末尾に **_AP** とつけると、そのレイヤーはSpriteに変換されますが、少しずれた位置に配置します。
+「UV」ボタン
+
+![image](https://user-images.githubusercontent.com/32963227/174842114-98cb0de7-cf9f-4b23-a3fc-07ae66395fcd.png)
+
+とりあえず表示させています。よくわからないですがもっといい感じに割ってください。
+
+> 参考: https://www.youtube.com/watch?v=irN6b8ESrH4
+
+### Spriteからの変換でPolygon2D
+
+レイヤー名の末尾に **_AP** とつけると、そのレイヤーはSpriteに変換されますが、少しずれた位置に配置します。
 
 これは、Spriteの上部メニューの「Polygon2Dに変換する」を使用するためのものです。
 
-「Polygon2Dに変換する」を実行するとPolygon2Dに変換され、正しい位置に配置されます。
+1. 「Polygon2Dに変換する」を実行するとPolygon2Dに変換されます。
+2. Polygon2Dの上部メニューUVエディタにて「編集」→「UVをPolygon2Dにコピー」で正しい位置に配置されます。
 
-Spriteと同じ見え方の配置にするためには、SpriteのpositionとPolugon2Dのpositionはレイヤー画像の半分ずれているのが原因です。
+Spriteと同じ見え方の配置にするためには、SpriteのpositionとPolygon2Dのpositionはレイヤー画像の半分ずれているので、ずらして位置を調整しています。（苦しい）
 
 
 
