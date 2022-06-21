@@ -11,6 +11,7 @@ Convert PSD file to Godot scene with layers info and export layer Images.
 
 ![psdtolayer2](https://user-images.githubusercontent.com/32963227/174835421-35970f7f-31a7-434b-965f-62e8206bb954.png)
 
+## このアドオンについて
 
 GodotEngineのアドオンです。
 
@@ -20,7 +21,11 @@ PSDのレイヤー構造・透明度を保持してGodotのシーンに変換し
 
 出力した画像を作成したシーンから読み込んでいます。
 
+PSDの読み込みは、GDNative(Rust)内にて行われています。
 
+
+
+## Godotに持っていけるデータ
 
 PSDでのレイヤー・レイヤーグループはノードツリーの階層となります。
 
@@ -32,7 +37,9 @@ PSDキャンバスサイズより小さいレイヤーは、その位置をGodot
 
 
 
-レイヤー画像はSpriteに変換されます。
+## レイヤー画像をSpriteノードまたはPolygon2Dノードとして読み込む
+
+デフォルトではレイヤー画像はSpriteに変換されます。
 
 ただし、レイヤー名の末尾に **_P** とつけると、そのレイヤーはPolygon2Dに変換されます。
 
@@ -54,16 +61,19 @@ Spriteと同じ見え方の配置にするためには、SpriteのpositionとPol
 
 ## 使い方
 
-ふつうのアドオンと同じです。
+インストールについては、ふつうのアドオンと同じです。
 
-addons/psd_to_layer_scene となるように配置します。
+addons/psd_to_layer_scene となるように配置します。プロジェクト設定→プラグインでこのアドオンを☑します。
 
 Windows, LinuxのみGDNativeを書き出しているのでMacは非対応です。
+
+PSD→画像 の処理でのpanicエラーはGodotの「出力」タブに内容が書かれます。
 
 
 ---
 
 GDNative（Rust）使用crate
+
 https://github.com/folt-a/psd_to_layer_scene/blob/native/LICENSE.json
 
 ---
