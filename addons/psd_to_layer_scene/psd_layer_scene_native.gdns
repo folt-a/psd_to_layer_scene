@@ -1,0 +1,8 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[ext_resource path="res://addons/psd_to_layer_scene/psd_layer_scene_native.gdnlib" type="GDNativeLibrary" id=1]
+
+[resource]
+resource_name = "PsdDataExport"
+class_name = "PsdDataExport"
+library = ExtResource( 1 )

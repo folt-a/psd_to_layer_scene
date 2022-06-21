@@ -1,0 +1,16 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+
+[deps]
+
+files=[ "res://addons/psd_to_layer_scene/translation/translation.en.translation", "res://addons/psd_to_layer_scene/translation/translation.ja_JP.translation" ]
+
+source_file="res://addons/psd_to_layer_scene/translation/translation.csv"
+dest_files=[ "res://addons/psd_to_layer_scene/translation/translation.en.translation", "res://addons/psd_to_layer_scene/translation/translation.ja_JP.translation" ]
+
+[params]
+
+compress=true
+delimiter=0
