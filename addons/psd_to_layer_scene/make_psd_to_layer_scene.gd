@@ -225,7 +225,7 @@ func set_group_node(json_value: Dictionary):
 	var group_node: Node2D = Node2D.new()
 	group_node.name = json_value.name
 	group_node.visible = json_value.visible
-	group_node.modulate.a = (255.0 - float(json_value.opacity)) / 255.0
+	# group_node.modulate.a = (255.0 - float(json_value.opacity)) / 255.0
 	group_node.set_meta("group_id", json_value.id)
 	group_node.set_meta("order_id", json_value.order_id)
 	parent_node.add_child(group_node)
