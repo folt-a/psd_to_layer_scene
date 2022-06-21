@@ -12,3 +12,7 @@ imported/
 .mono/
 data_*/
 
+#
+target
+.idea
+Cargo*
