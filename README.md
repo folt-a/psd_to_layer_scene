@@ -26,7 +26,7 @@ Outputs the layer image to the directory specified by PNG, WebP, BMP.
 
 The output image read from the created scene.
 
-** This add-on does not need to be included in the game itself. ** 
+**This add-on does not need to be included in the game itself.**
 
 (Because it only creates scenes and images)
 
@@ -40,7 +40,7 @@ Layers smaller than the PSD canvas converts their position to Godot's position.
 
 The transparency of the layer goes into modulate.a.
 
-** Group transparency, filter, mask layer, layer composition mode, etc. are not supported. ** **
+**Group transparency, filter, mask layer, layer composition mode, etc. are not supported.**
 
 ## Import layer image as a Sprite node or Polygon 2D node
 ### Sprite
