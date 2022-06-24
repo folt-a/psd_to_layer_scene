@@ -3,9 +3,11 @@ use gdnative::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::fs::{File};
+use std::io::Write;
 use std::io::{BufWriter};
 use std::ffi::OsStr;
-use image::RgbaImage;
+use image::error::{EncodingError, ImageFormatHint};
+use image::{ImageError, RgbaImage};
 use psd::{Psd, PsdGroup, PsdLayer};
 
 #[derive(NativeClass)]
@@ -21,6 +23,8 @@ struct PsdDataExport {
     ignore_file_paths: gdnative::core_types::StringArray,
     #[property]
     image_extension: GodotString,
+    #[property]
+    quality_factor: f32,
 }
 
 #[methods]
@@ -32,6 +36,7 @@ impl PsdDataExport {
             is_overwrite: false,
             ignore_file_paths: StringArray::new(),
             image_extension: GodotString::from(""),
+            quality_factor: 0.0,
         }
     }
 
@@ -69,16 +74,16 @@ impl PsdDataExport {
                         .to_vec()
                         .contains(&GodotString::from_str(psd_path.to_str().unwrap()));
 
-                    godot_print!("is_ignore: {}",psd_path.to_str().unwrap());
-                    godot_print!("is_ignore: {}",is_ignore);
+                    // godot_print!("is_ignore: {}",psd_path.to_str().unwrap());
+                    // godot_print!("is_ignore: {}",is_ignore);
                     if is_ignore {
-                        godot_print!("continue{}","");
+                        // godot_print!("continue{}","");
                         continue;
                     }
 
                     vec_files.push(filename.to_string());
 
-                    godot_print!("{}",&filename);
+                    // godot_print!("{}",&filename);
                 }
             }
         }
@@ -166,7 +171,7 @@ impl PsdDataExport {
 
         // println!("{}", serde_json::to_string(&layers_json).unwrap());
 
-        println!("{}", "--------------------");
+        // println!("{}", "--------------------");
 
         for layer in psd.layers().iter() {
             let layer_name: String = layer.name().to_string();
@@ -192,7 +197,23 @@ impl PsdDataExport {
                 "webp" => {
                     let w = File::create(export_image_path).unwrap();
                     let mut writer = BufWriter::new(w);
-                    libwebp_image::webp_write_rgba(&layer_image.to_image(), &mut writer).unwrap();
+                    const LOSSLESS: f32 = 101.0;
+                    if &self.quality_factor == &LOSSLESS {
+                        let buf = libwebp::WebPEncodeLosslessRGBA(&layer_image.to_image(), layer_width, layer_height, layer_width * 4)
+                            .map_err(|_| EncodingError::new(ImageFormatHint::Unknown, "Webp Format Error".to_string()))
+                            .map_err(ImageError::Encoding)
+                            .unwrap();
+                        writer.write_all(&buf).unwrap();
+                        // godot_print!("{0}","lossless");
+                    } else {
+                        let buf = libwebp::WebPEncodeRGBA(&layer_image.to_image(), layer_width, layer_height, layer_width * 4, self.quality_factor)
+                            .map_err(|_| EncodingError::new(ImageFormatHint::Unknown, "Webp Format Error".to_string()))
+                            .map_err(ImageError::Encoding)
+                            .unwrap();
+                        writer.write_all(&buf).unwrap();
+                        // godot_print!("{0}","not lossless");
+                    }
+                    // libwebp_image::webp_write_rgba(&layer_image.to_image(), &mut writer).unwrap();
                 }
                 "jpg" => {
                     layer_image
