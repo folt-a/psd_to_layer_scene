@@ -7,7 +7,7 @@ GodotEngine 3.4~ Addon.
 
 Convert PSD file to Godot scene with layers info and export layer Images.
 
-日本語のREADMEは下のほうにあります。(Japanese READ ME is below)
+[日本語のREADMEは下のほうにあります。](https://github.com/folt-a/psd_to_layer_scene#%E3%81%93%E3%81%AE%E3%82%A2%E3%83%89%E3%82%AA%E3%83%B3%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)(Japanese READ ME)
 
 ---
 
@@ -106,9 +106,9 @@ LICENSE　MIT
 
 ---
 
-![image](https://user-images.githubusercontent.com/32963227/175462190-68bc6ab9-4931-41ea-b7d7-ab55ceb6a8b9.png)
-
 ## このアドオンについて
+
+![image](https://user-images.githubusercontent.com/32963227/175462190-68bc6ab9-4931-41ea-b7d7-ab55ceb6a8b9.png)
 
 GodotEngineのアドオンです。
 
