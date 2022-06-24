@@ -39,7 +39,7 @@ func execute() -> int:
 	if not dir.dir_exists(_layer_images_dir_path):
 		printerr(S.tr("_cantfindpsddir"))
 		return FAILED
-	print("[TargetDir] " + _layer_images_dir_path)
+#	print("[TargetDir] " + _layer_images_dir_path)
 	# 引数2 出力先ディレクトリ
 	if !_save_dir_path.ends_with("/"):
 		_save_dir_path = _save_dir_path + "/"
@@ -68,10 +68,11 @@ func execute() -> int:
 #	print("対象ファイル")
 	#print(json_paths)
 	if json_paths.size() == 0:
+		print("[Skip] " + S.tr("_noimage"))
 		return -1
 
 #	リソース更新後、インポート完了を待つ
-	_filesystem.scan_sources()
+	_filesystem.scan()
 	yield(_filesystem,"filesystem_changed")
 
 	for json_path_v in json_paths:

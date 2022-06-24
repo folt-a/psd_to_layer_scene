@@ -119,10 +119,54 @@ margin_right = 1024.0
 margin_bottom = 138.0
 rect_min_size = Vector2( 240, 0 )
 
-[node name="IsOverwriteLayer" type="HBoxContainer" parent="."]
+[node name="WebPQualityFactor" type="HBoxContainer" parent="."]
 margin_top = 142.0
 margin_right = 1024.0
 margin_bottom = 166.0
+
+[node name="Control" type="Control" parent="WebPQualityFactor"]
+margin_right = 510.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="QualityFactor2" type="HBoxContainer" parent="WebPQualityFactor"]
+margin_left = 514.0
+margin_right = 1024.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="IsLossLessCheck" type="CheckBox" parent="WebPQualityFactor/QualityFactor2"]
+margin_right = 111.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+pressed = true
+text = "is_lossless"
+flat = true
+
+[node name="QualityFactorLabel" type="Label" parent="WebPQualityFactor/QualityFactor2"]
+margin_left = 115.0
+margin_top = 5.0
+margin_right = 395.0
+margin_bottom = 19.0
+rect_min_size = Vector2( 280, 0 )
+size_flags_horizontal = 3
+text = "QualityFactor:"
+align = 2
+
+[node name="QualityFactorSpinBox" type="SpinBox" parent="WebPQualityFactor/QualityFactor2"]
+margin_left = 399.0
+margin_right = 510.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
+step = 0.01
+value = 75.0
+align = 2
+
+[node name="IsOverwriteLayer" type="HBoxContainer" parent="."]
+margin_top = 170.0
+margin_right = 1024.0
+margin_bottom = 194.0
 
 [node name="Control" type="Control" parent="IsOverwriteLayer"]
 margin_right = 510.0
@@ -148,9 +192,9 @@ text = "同名レイヤー画像を上書きする"
 flat = true
 
 [node name="IsOverwriteScene" type="HBoxContainer" parent="."]
-margin_top = 170.0
+margin_top = 198.0
 margin_right = 1024.0
-margin_bottom = 194.0
+margin_bottom = 222.0
 
 [node name="Control" type="Control" parent="IsOverwriteScene"]
 margin_right = 510.0
@@ -167,15 +211,15 @@ text = "同名シーンを上書きする"
 flat = true
 
 [node name="ResultLogLabel" type="Label" parent="."]
-margin_top = 198.0
+margin_top = 226.0
 margin_right = 1024.0
-margin_bottom = 222.0
+margin_bottom = 250.0
 rect_min_size = Vector2( 0, 24 )
 
 [node name="ExecuteButton" type="Button" parent="."]
-margin_top = 226.0
+margin_top = 254.0
 margin_right = 1024.0
-margin_bottom = 258.0
+margin_bottom = 286.0
 rect_min_size = Vector2( 0, 32 )
 text = "シーン作成！"
 
@@ -188,3 +232,4 @@ export_dir = ""
 is_overwrite = false
 ignore_file_paths = PoolStringArray(  )
 image_extension = ""
+quality_factor = 0.0

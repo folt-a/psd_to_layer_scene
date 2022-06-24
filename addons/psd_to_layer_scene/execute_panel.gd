@@ -21,19 +21,23 @@ onready var psd_layers_dir_label: Label = $PsdLayersDirectory/PsdLayersDirLabel
 onready var export_scenes_dir_label: Label = $ExportScenesDirectory/ExportScenesDirLabel
 onready var result_log_label: Label = $ResultLogLabel
 onready var image_extension_label: Label = $ImageExtension/ImageExtensionLabel
+onready var quality_factor_label: Label = $WebPQualityFactor/QualityFactor2/QualityFactorLabel
+
+onready var web_p_quality_factor: HBoxContainer = $WebPQualityFactor
 
 onready var psd_files_dir_value: LineEdit = $PsdFilesDirectory/PsdFilesDirValue
 onready var psd_layers_dir_value: LineEdit = $PsdLayersDirectory/PsdLayersDirValue
 onready var export_scenes_dir_value: LineEdit = $ExportScenesDirectory/ExportScenesDirValue
 onready var image_extension_option: OptionButton = $ImageExtension/ImageExtensionOption
+onready var is_loss_less_check: CheckBox = $WebPQualityFactor/QualityFactor2/IsLossLessCheck
+onready var quality_factor_spin_box: SpinBox = $WebPQualityFactor/QualityFactor2/QualityFactorSpinBox
 onready var is_timestamp_check: CheckBox = $IsOverwriteLayer/IsTimestampCheck
 onready var is_overwrite_layer_check: CheckBox = $IsOverwriteLayer/IsOverwriteLayerCheck
 onready var is_overwrite_scene_check: CheckBox = $IsOverwriteScene/IsOverwriteSceneCheck
 onready var execute_button: Button = $ExecuteButton
-
-
-
 func init() -> void:
+	quality_factor_spin_box.connect("value_changed",self,"_on_quality_factor_spin_box_value_changed")
+	is_loss_less_check.connect("pressed",self,"on_is_loss_less_check_pressed")
 	image_extension_option.connect("item_selected", self, "_on_image_extension_option_item_selected");
 	execute_button.connect("pressed", self, "_on_execute_button_pressed")
 	export_scenes_dir_value.connect(
@@ -48,15 +52,17 @@ func init() -> void:
 	image_extension_option.clear()
 	image_extension_option.add_item('PNG',0)
 	image_extension_option.add_item('WebP',1)
-	image_extension_option.add_item('JPEG',2)
-	image_extension_option.add_item('GIF',3)
-	image_extension_option.add_item('BMP',4)
+#	image_extension_option.add_item('JPEG',2)
+#	image_extension_option.add_item('GIF',3)
+#	image_extension_option.add_item('BMP',4)
 
 	title_label.text = S.tr("title_label")
-	psd_files_label.text = S.tr("psd_layers_dir_label")
+	psd_files_label.text = S.tr("psd_files_label")
 	psd_layers_dir_label.text = S.tr("psd_layers_dir_label")
 	export_scenes_dir_label.text = S.tr("export_scenes_dir_label")
 	image_extension_label.text = S.tr("image_extension_label")
+	quality_factor_label.text = S.tr("quality_factor_label")
+	is_loss_less_check.text = S.tr("is_loss_less_check")
 	is_overwrite_layer_check.text = S.tr("is_overwrite_layer_check")
 	is_overwrite_scene_check.text = S.tr("is_overwrite_scene_check")
 	is_timestamp_check.text = S.tr("is_timestamp_check")
@@ -76,6 +82,11 @@ func _setting_load():
 			psd_layers_dir_value.text = data.psd_layers_dir_value
 		if data and data.has("export_scenes_dir_value"):
 			export_scenes_dir_value.text = data.export_scenes_dir_value
+		if data and data.has("is_loss_less_check"):
+			is_loss_less_check.pressed = data.is_loss_less_check
+		if data and data.has("quality_factor_spin_box"):
+			quality_factor_spin_box.value = data.quality_factor_spin_box
+			quality_factor_spin_box.apply()
 		if data and data.has("is_overwrite_scene_check"):
 			is_overwrite_scene_check.pressed = data.is_overwrite_scene_check
 		if data and data.has("is_overwrite_layer_check"):
@@ -89,6 +100,9 @@ func _setting_load():
 		else:
 			image_extension_option.select(0)
 		fl.close()
+	web_p_quality_factor.visible = image_extension_option.selected == 1
+	quality_factor_spin_box.visible = !is_loss_less_check.pressed
+	quality_factor_label.visible = !is_loss_less_check.pressed
 
 
 func _setting_save() -> void:
@@ -97,6 +111,8 @@ func _setting_save() -> void:
 		psd_files_dir_value = psd_files_dir_value.text,
 		psd_layers_dir_value = psd_layers_dir_value.text,
 		export_scenes_dir_value = export_scenes_dir_value.text,
+		is_loss_less_check = is_loss_less_check.pressed,
+		quality_factor_spin_box = quality_factor_spin_box.value,
 		is_overwrite_scene_check = is_overwrite_scene_check.pressed,
 		is_overwrite_layer_check = is_overwrite_layer_check.pressed,
 		is_timestamp_check = is_timestamp_check.pressed,
@@ -125,12 +141,9 @@ func _on_execute_button_pressed():
 	var ignore_file_paths: PoolStringArray = []
 	for psd_file_path in psd_file_paths:
 		if !_is_modified(psd_file_path):
+			print("[Ignore] " + psd_file_path + S.tr("_isnotmodified"))
 			ignore_file_paths.append(psd_file_path)
 	_setting_save()
-	result_log_label.modulate.a = 1
-	result_log_label.text = S.tr("psdtoimage")
-#	yield(get_tree().create_timer(1), "timeout")
-	yield(VisualServer, "frame_post_draw")
 
 	var extension := ""
 	match image_extension_option.selected:
@@ -138,12 +151,12 @@ func _on_execute_button_pressed():
 			extension = 'png'
 		1:
 			extension = 'webp'
-		2:
-			extension = 'jpg'
-		3:
-			extension = 'gif'
-		4:
-			extension = 'bmp'
+#		2:
+#			extension = 'jpg'
+#		3:
+#			extension = 'gif'
+#		4:
+#			extension = 'bmp'
 			
 #	画像出力、JSON出力
 	psd_data_export.psd_dir = ProjectSettings.globalize_path(psd_files_dir_value.text)
@@ -151,8 +164,18 @@ func _on_execute_button_pressed():
 	psd_data_export.is_overwrite = is_overwrite_layer_check.pressed
 	psd_data_export.ignore_file_paths = ignore_file_paths
 	psd_data_export.image_extension = extension
+	if is_loss_less_check.pressed:
+		psd_data_export.quality_factor = 101.0
+	else:
+		psd_data_export.quality_factor = quality_factor_spin_box.value
+		
+	result_log_label.modulate.a = 1
+	result_log_label.text = S.tr("_psdtoimage")
+	print("[Start] " + S.tr("_psdtoimage"))
+	yield(VisualServer, "frame_post_draw")
 	psd_data_export.execute()
-
+	print("[End] " + S.tr("_psdtoimagecompleted"))
+	
 	var batch_script = _make_psd_layer_script.new(
 		S,
 		psd_layers_dir_value.text,
@@ -161,15 +184,24 @@ func _on_execute_button_pressed():
 		extension,
 		filesystem
 	)
+	
+	result_log_label.text = S.tr("_createscene")
+	print("[Start] " + S.tr("_createscene"))
+	yield(VisualServer, "frame_post_draw")
 	var batch_state: GDScriptFunctionState = batch_script.execute()
+	print("[End] " + S.tr("_createscenecompleted"))
+	
 	var res: int = yield(batch_state, "completed")
 	filesystem.scan_sources()
 	if res == OK:
 		result_log_label.text = S.tr("_finishoutput")
+		print("[Completed] " + S.tr("_finishoutput"))
 	elif res == -1:
 		result_log_label.text = S.tr("_noimage")
+		print("[Failed] " + S.tr("_noimage"))
 	else:
 		result_log_label.text = S.tr("_notfinishoutput")
+		print("[Failed] " + S.tr("_notfinishoutput"))
 	result_log_label.modulate.a = 1
 	$Tween.interpolate_property(
 		result_log_label,
@@ -201,6 +233,16 @@ func _on_psd_layers_dir_value_text_changed(new_text: String):
 	_setting_save()
 
 
+func on_is_loss_less_check_pressed():
+	quality_factor_spin_box.visible = !is_loss_less_check.pressed
+	quality_factor_label.visible = !is_loss_less_check.pressed
+	_setting_save()
+
+
+func _on_quality_factor_spin_box_value_changed(value: float):
+	_setting_save()
+
+
 func _on_is_overwrite_scene_check_pressed():
 	_setting_save()
 
@@ -214,6 +256,7 @@ func _on_is_timestamp_check_pressed():
 
 
 func _on_image_extension_option_item_selected(index: int):
+	web_p_quality_factor.visible = index == 1
 	_setting_save()
 
 
@@ -248,6 +291,6 @@ func _is_modified(file_path: String) -> bool:
 
 	var last_time = _psd_timestamps[file_path]
 	_psd_timestamps[file_path] = file_time
-	print("file_time", file_time)
-	print("last_time", last_time)
+#	print("file_time", file_time)
+#	print("last_time", last_time)
 	return file_time != last_time

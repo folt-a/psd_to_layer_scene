@@ -4,14 +4,20 @@ psd_files_label,PSD files Directory:,PSDファイルがあるディレクトリ:
 psd_layers_dir_label,Export Layer Image files Directory:,レイヤー画像を出力するディレクトリ:
 export_scenes_dir_label,Export Scenes Directory:,シーン出力するディレクトリ:
 image_extension_label,Output Image File Format,出力する画像フォーマット
+quality_factor_label,WebP Quality Factor,WebP 品質
+is_loss_less_check,Lossless,Lossless(品質劣化なし、可逆)
 is_overwrite_layer_check,Overwrite Image,同名レイヤー画像を上書きする
 is_overwrite_scene_check,Overwrite Scene,同名シーンを上書きする
-is_timestamp_check,ignore PSD files with the same modification timestamp,PSDファイルの更新日時が同じファイルは対象としない
+is_timestamp_check,ignore PSD files with the same modification timestamp,PSDファイルの更新日時が同じファイルは無視する
 execute_button,Create Scenes,シーン作成！
-psdtoimage,[Convert] Converting PSD to Layer Images... ,[画像抽出中] PSDを画像に変換中です...
+_psdtoimage,[Convert] Converting PSD to Layer Images... ,PSDを画像に変換中です...
+_psdtoimagecompleted,[Convert] Completed Convert PSD to Layer Images. ,PSDを画像に変換完了しました。
+_createscene,Creating Scenes,シーン作成中です...
+_createscenecompleted,Completed Create Scenes,シーン作成完了しました。
 _finishoutput,[Completed] successfully output. Details are on the Output tab,正常に完了しました。詳細は出力タブにあります。
 _notfinishoutput,[Error] Could not output. Details are on the Output tab,エラーで出力できませんでした。詳細は出力タブにあります。
 _noimage,Target Image File is Nothing,対象となる画像がありません。
+_isnotmodified,is not modified, は更新されていません。
 _batchstart,[batch] Start Create PSD Layer Scene.,[Batch] PSDレイヤー画像からシーン作成 開始
 _cantfindpsddir,Can't find PSD Directory,PSDディレクトリがありません。
 _cantopenpsddir,Can't open PSD Directory,PSDディレクトリを開けませんでした。
