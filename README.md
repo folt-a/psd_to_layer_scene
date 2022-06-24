@@ -11,7 +11,8 @@ Convert PSD file to Godot scene with layers info and export layer Images.
 
 ---
 
-![psdtolayer2](https://user-images.githubusercontent.com/32963227/174835421-35970f7f-31a7-434b-965f-62e8206bb954.png)
+![image](https://user-images.githubusercontent.com/32963227/175462478-081ee4f4-721a-4d79-b628-f15740819764.png)
+
 
 ---
 
@@ -104,6 +105,8 @@ https://github.com/folt-a/psd_to_layer_scene/blob/native/LICENSE.json
 LICENSE　MIT
 
 ---
+
+![image](https://user-images.githubusercontent.com/32963227/175462190-68bc6ab9-4931-41ea-b7d7-ab55ceb6a8b9.png)
 
 ## このアドオンについて
 
