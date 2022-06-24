@@ -35,6 +35,8 @@ reading PSD feature is in GDNative (Rust).
 
 ## PSD to Godot
 
+**Make sure that the "layer name" is unique on all layers.**
+
 Layers and layer groups in PSD are the hierarchy of the node tree.
 
 Layers smaller than the PSD canvas converts their position to Godot's position.
@@ -133,6 +135,10 @@ PSDキャンバスサイズより小さいレイヤーは、その位置をGodot
 レイヤーの透明度はmodulate.a に入ります。
 
 **グループの透明度・塗り・フィルター・マスクレイヤー・レイヤーの合成モードなどは非対応です。**
+
+### 注意点
+
+**すべてのレイヤーで、「レイヤー名」が重複しないようにしてください。**
 
 
 
