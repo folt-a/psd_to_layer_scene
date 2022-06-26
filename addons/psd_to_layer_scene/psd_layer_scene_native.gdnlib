@@ -7,10 +7,12 @@ reloadable=true
 
 [entry]
 
+OSX.64="res://addons/psd_to_layer_scene/native/libpsd_layer_to_scene.dylib"
 Windows.64="res://addons/psd_to_layer_scene/native/psd_layer_to_scene.dll"
 X11.64="res://addons/psd_to_layer_scene/native/libpsd_layer_to_scene.so"
 
 [dependencies]
 
+OSX.64=[  ]
 Windows.64=[  ]
 X11.64=[  ]
