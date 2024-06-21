@@ -13,8 +13,7 @@ const _this_script_path := "res://addons/psd_to_layer_scene/translation/translat
 func load_strings()->void:
 	## loads the strings dictionary from the default strings csv file
 	## デフォルトの文字列csvファイルから文字列辞書をロードします
-	var f:File = File.new()
-	f.open(_locale_csv_path, File.READ)
+	var f := FileAccess.open(_locale_csv_path, FileAccess.READ)
 	strings_dict = {} # replace previous dictionary
 	var header = Array(f.get_csv_line())
 	header[0] = "id"
@@ -38,7 +37,7 @@ func load_strings()->void:
 			subdict[lang] = line[count]
 
 
-func tr(id:String)->String:
+func tr(id : StringName, __ : StringName = &"") -> String:
 	## shorthand for the translate method
 	## mimics the behavior of Object.tr(message:String)
 	## translateメソッドの省略形
@@ -46,7 +45,7 @@ func tr(id:String)->String:
 	return translate(id)
 
 
-func translate(id:String)->String:
+func translate(id:StringName)->String:
 	## mimics the behavior of TranslationServer.translate(message:String)
 	## TranslationServer.translate(message:String) の動作を模倣します
 	if not strings_dict is Dictionary or strings_dict.size() < 1:

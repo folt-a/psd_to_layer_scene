@@ -1,4 +1,4 @@
-tool
+@tool
 extends MarginContainer
 
 func _init() -> void:

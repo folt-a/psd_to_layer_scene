@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorPlugin
 
 var bottom_panel : Control
@@ -9,7 +9,7 @@ const plugin_scene : PackedScene = preload("res://addons/psd_to_layer_scene/exec
 
 func _enter_tree() -> void:
 	bottom_panel = Wrapper.new()
-	plugin_panel = plugin_scene.instance()
+	plugin_panel = plugin_scene.instantiate()
 	plugin_panel.filesystem = self.get_editor_interface().get_resource_filesystem()
 	bottom_panel.add_child(plugin_panel)
 	add_control_to_bottom_panel(bottom_panel, "PSD")
