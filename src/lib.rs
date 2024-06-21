@@ -1,6 +1,7 @@
 // use gdnative::api::{Directory, File};
 use godot::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::fs;
 use std::fs::{File};
 use std::io::Write;
@@ -49,7 +50,7 @@ struct PsdDataExport {
 impl PsdDataExport {
 
     #[func]
-    fn execute(&self) {
+    fn execute(&self, export_options : godot::builtin::Dictionary) {
         let dir_path = GString::to_string(&self.psd_dir);
         let mut psd_files: Vec<String> = Vec::new();
 
@@ -57,7 +58,7 @@ impl PsdDataExport {
         self.recursive_psd_files(dir_path, psd_files.as_mut());
 
         for psd_file_path in psd_files {
-            self.export(psd_file_path.as_str());
+            self.export(psd_file_path.as_str(), &export_options);
         }
     }
 
@@ -97,7 +98,7 @@ impl PsdDataExport {
         }
     }
 
-    fn export(&self, file_name: &str) {
+    fn export(&self, file_name: &str, export_options : &Dictionary) {
         godot_print!("{}", file_name);
 
         let psd_dir_path = GString::to_string(&self.psd_dir);
@@ -111,12 +112,13 @@ impl PsdDataExport {
         let mut groups_json: Vec<Group> = Vec::new();
         let mut layers_json: Vec<Layer> = Vec::new();
 
-        let groups: Vec<&PsdGroup> = psd.group_ids_in_order()
+        let mut groups: Vec<&PsdGroup> = psd.group_ids_in_order()
             .iter()
             .map(|x| { psd.groups().get(x).unwrap() })
             .collect();
         // groups.sort_by_key(|x1| { x1.order_id() });
         // groups.sort_by_key(|x1| { x1.parent_id() });
+        groups.sort_by_key(|x1| { x1.id() });
 
         for (i, group) in groups.iter().enumerate() {
             // println!("{}", i);
@@ -170,6 +172,43 @@ impl PsdDataExport {
             layers_json.push(layer_model);
         }
 
+        // ドキュメント全体のレイヤー等名の重複チェック
+        if Self::get_export_option_value(export_options, "append_suffix_by_order", false) {
+            let mut doc_member_names : std::collections::HashSet<String> = std::collections::HashSet::new();
+            for group in groups.iter() {
+                let group_name_string : String = group.name().to_string();
+                if !doc_member_names.insert(group_name_string) { // insert で存在確認する
+                    panic!("Duplicated name of Layer or Group in a document is not allowed unless append_suffix_by_order is enabled."); 
+                }
+            }
+            for layer in layers.iter() {
+                let layer_name_string : String = layer.name().to_string();
+                if !doc_member_names.insert(layer_name_string) { // insert で存在確認する
+                    panic!("Duplicated name of Layer or Group in a document is not allowed unless append_suffix_by_order is enabled."); 
+                } 
+            }
+        }
+
+        // グループごとのレイヤー名の重複チェック
+        let mut groups_member_names : Vec<std::collections::HashSet<String>> = Vec::new();
+        groups_member_names.resize(groups.len()+1, HashSet::new());
+        for group in groups.iter() {
+            let parent_id = group.parent_id().unwrap_or(0u32);
+            let parent_id_as_usize = usize::try_from(parent_id).unwrap();
+            let group_name_string : String = group.name().to_string();
+            if !groups_member_names[parent_id_as_usize].insert(group_name_string) { // insert で存在確認する
+                panic!("Duplicated name of Layer or Group in a same group is not allowed."); 
+            }
+        }
+        for layer in layers.iter() {
+            let parent_id = layer.parent_id().unwrap_or(0u32);
+            let parent_id_as_usize = usize::try_from(parent_id).unwrap();
+            let layer_name_string : String = layer.name().to_string();
+            if !groups_member_names[parent_id_as_usize].insert(layer_name_string) { // insert で存在確認する
+                panic!("Duplicated name of Layer or Group in a same group is not allowed."); 
+            }
+        }
+
         // 出力先PNGのディレクトリ作成
         let export_dir_path = std::path::Path::new(&export_dir_path);
         let export_dir_path = export_dir_path.join(file_name);
@@ -192,7 +231,7 @@ impl PsdDataExport {
 
         // println!("{}", "--------------------");
 
-        for layer in psd.layers().iter() {
+        for (i, layer) in psd.layers().iter().enumerate() {
             let layer_name: String = layer.name().to_string();
             let psd_width: u32 = psd.width();
             let psd_height: u32 = psd.height();
@@ -205,7 +244,13 @@ impl PsdDataExport {
             // PSD全体からレイヤー部分のみクロップする
             let layer_image = image::imageops::crop(&mut img, layer_x, layer_y, layer_width, layer_height);
             let extension = GString::to_string(&self.image_extension);
-            let export_image_path = &export_dir_path.join(layer_name + "." + GString::to_string(&self.image_extension).as_str());
+            let export_image_path =
+                if Self::get_export_option_value(export_options, "append_suffix_by_order", false) { 
+                    export_dir_path.join(layer_name + "_" + &(format!("{:0>4}", i.to_string())) + "." + GString::to_string(&self.image_extension).as_str())
+                } else { 
+                    export_dir_path.join(layer_name + "." + GString::to_string(&self.image_extension).as_str())
+                };
+
             match &*extension {
                 "png" => {
                     layer_image
@@ -255,6 +300,12 @@ impl PsdDataExport {
                 _ => panic!(),
             }
         }
+    }
+
+    fn get_export_option_value<T>(export_options : &Dictionary, key_str : &str, default : T) -> T where T : ToGodot + FromGodot {
+        let Some(option_value_variant) = export_options.get(StringName::from(key_str)) else { return default };
+
+        option_value_variant.try_to().unwrap_or(default)
     }
 }
 
@@ -347,10 +398,11 @@ struct LibEntry;
 unsafe impl ExtensionLibrary for LibEntry {
     fn min_level() -> InitLevel { InitLevel::Core }
 
+    #[allow(clippy::single_match)] // 将来的にInitLevel::Core以外のInitLevel::Coreで何かする可能性を考慮している
     fn on_level_init(level: InitLevel){
         match level {
-            InitLevel::Core => {init_panic_hook()},
-            _ => {}
+            InitLevel::Core => { init_panic_hook(); }, // FIXME: ちゃんと効いてるかわからない 多分効いてない
+            _ => {} // 何もしない
         }
     }
 }
