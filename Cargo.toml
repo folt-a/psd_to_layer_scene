@@ -7,8 +7,8 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gdnative = "0.10.0"
-psd = "0.3.1"
+godot = { git = "https://github.com/godot-rust/gdext", branch = "master" }
+psd = "0.3.5"
 image = "0.24.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -20,6 +20,3 @@ crate-type = ["cdylib"]
 
 [target.x86_64-pc-windows-gnu]
 linker = "x86_64-w64-mingw32-gcc"
-
-[patch.crates-io]
-psd = { git = 'https://github.com/folt-a/psd', branch = 'master' }
