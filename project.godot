@@ -6,16 +6,21 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
 [application]
 
 config/name="psd_to_layer_scene"
+config/features=PackedStringArray("4.2")
 config/icon="res://icon.png"
+
+[dotnet]
+
+project/assembly_name="psd_to_layer_scene"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/psd_to_layer_scene/plugin.cfg" )
+enabled=PackedStringArray("res://addons/psd_to_layer_scene/plugin.cfg")
 
 [physics]
 
