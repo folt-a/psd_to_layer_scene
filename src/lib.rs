@@ -111,12 +111,13 @@ impl PsdDataExport {
         let mut groups_json: Vec<Group> = Vec::new();
         let mut layers_json: Vec<Layer> = Vec::new();
 
-        let groups: Vec<&PsdGroup> = psd.group_ids_in_order()
+        let mut groups: Vec<&PsdGroup> = psd.group_ids_in_order()
             .iter()
             .map(|x| { psd.groups().get(x).unwrap() })
             .collect();
         // groups.sort_by_key(|x1| { x1.order_id() });
         // groups.sort_by_key(|x1| { x1.parent_id() });
+        groups.sort_by_key(|x1| { x1.id() });
 
         for (i, group) in groups.iter().enumerate() {
             // println!("{}", i);
