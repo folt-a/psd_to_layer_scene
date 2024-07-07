@@ -1,5 +1,5 @@
 // use gdnative::api::{Directory, File};
-use gdnative::prelude::*;
+use godot::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::fs::{File};
@@ -10,39 +10,47 @@ use image::error::{EncodingError, ImageFormatHint};
 use image::{ImageError, RgbaImage};
 use psd::{Psd, PsdGroup, PsdLayer};
 
-#[derive(NativeClass)]
-#[inherit(Node)]
+#[derive(GodotClass)]
+#[class(init, base = Node)]
 struct PsdDataExport {
-    #[property]
-    psd_dir: GodotString,
-    #[property]
-    export_dir: GodotString,
-    #[property]
+    #[export]
+    psd_dir: GString,
+    #[export]
+    export_dir: GString,
+    #[export]
     is_overwrite: bool,
-    #[property]
-    ignore_file_paths: gdnative::core_types::StringArray,
-    #[property]
-    image_extension: GodotString,
-    #[property]
+    #[export]
+    ignore_file_paths: godot::builtin::PackedStringArray, // godot::core_types::StringArray,
+    #[export]
+    image_extension: GString,
+    #[export]
     quality_factor: f32,
+
+    base: Base<Node>, 
 }
 
-#[methods]
-impl PsdDataExport {
-    fn new(_owner: &Node) -> Self {
-        PsdDataExport {
-            psd_dir: GodotString::from(""),
-            export_dir: GodotString::from(""),
-            is_overwrite: false,
-            ignore_file_paths: StringArray::new(),
-            image_extension: GodotString::from(""),
-            quality_factor: 0.0,
-        }
-    }
+// // NOTE: #[derive(GodotClass)] で #[class(init)] が指定されているとinit()を生成するため、これに加えて手動でinit()を書くと多重定義に陥る
+// #[godot_api]
+// impl INode for PsdDataExport{
+//     fn init(base: Base<Node>) -> Self {
+//         PsdDataExport {
+//             psd_dir: GString::from(""),
+//             export_dir: GString::from(""),
+//             is_overwrite: false,
+//             ignore_file_paths: PackedStringArray::new(),
+//             image_extension: GString::from(""),
+//             quality_factor: 0.0,
+//             base: base,
+//         }
+//     }
+// }
 
-    #[export]
-    fn execute(&self, _owner: &Node) {
-        let dir_path = GodotString::to_string(&self.psd_dir);
+#[godot_api]
+impl PsdDataExport {
+
+    #[func]
+    fn execute(&self) {
+        let dir_path = GString::to_string(&self.psd_dir);
         let mut psd_files: Vec<String> = Vec::new();
 
         // 再帰処理関数 ディレクトリ内のPSDファイル抽出
@@ -72,7 +80,7 @@ impl PsdDataExport {
 
                     let is_ignore = self.ignore_file_paths
                         .to_vec()
-                        .contains(&GodotString::from_str(psd_path.to_str().unwrap()));
+                        .contains(&GString::from(psd_path.to_str().unwrap()));
 
                     // godot_print!("is_ignore: {}",psd_path.to_str().unwrap());
                     // godot_print!("is_ignore: {}",is_ignore);
@@ -90,13 +98,15 @@ impl PsdDataExport {
     }
 
     fn export(&self, file_name: &str) {
-        let psd_dir_path = GodotString::to_string(&self.psd_dir);
+        godot_print!("{}", file_name);
+
+        let psd_dir_path = GString::to_string(&self.psd_dir);
         let psd_path = std::path::Path::new(&psd_dir_path);
         let psd_path = &psd_path.join(file_name.to_string() + ".psd");
         let bytes = fs::read(psd_path).unwrap();
-        let psd = Psd::from_bytes(&bytes).unwrap();
+        let psd = Psd::from_bytes(&bytes).unwrap(); // ここで落ちている？？
 
-        let export_dir_path = GodotString::to_string(&self.export_dir);
+        let export_dir_path = GString::to_string(&self.export_dir);
 
         let mut groups_json: Vec<Group> = Vec::new();
         let mut layers_json: Vec<Layer> = Vec::new();
@@ -105,10 +115,11 @@ impl PsdDataExport {
             .iter()
             .map(|x| { psd.groups().get(x).unwrap() })
             .collect();
-        groups.sort_by_key(|x1| { x1.order_id() });
-        groups.sort_by_key(|x1| { x1.parent_id() });
+        // groups.sort_by_key(|x1| { x1.order_id() });
+        // groups.sort_by_key(|x1| { x1.parent_id() });
+        groups.sort_by_key(|x1| { x1.id() });
 
-        for group in groups.iter() {
+        for (i, group) in groups.iter().enumerate() {
             // println!("{}", i);
             // let (_, group) = psd.groups()
             //     .iter()
@@ -118,7 +129,7 @@ impl PsdDataExport {
             let group_model = Group {
                 id: group.id(),
                 parent_id: group.parent_id(),
-                visible: !group.visible(),
+                visible: group.visible(),
                 opacity: group.opacity(),
                 name: group.name().to_string(),
                 left: group.layer_left(),
@@ -128,18 +139,19 @@ impl PsdDataExport {
                 width: group.width(),
                 height: group.height(),
                 blending_mode: group.blend_mode() as u8,
-                order_id: group.order_id(),
+                // order_id: group.order_id(), // group.order_id() は存在しなくなっている
+                order_id: i32::try_from(i).unwrap(),
             };
             groups_json.push(group_model);
         }
-
-        let mut layers: Vec<&PsdLayer> = psd.layers()
+        
+        let layers: Vec<&PsdLayer> = psd.layers()
             .iter()
             .collect();
-        layers.sort_by_key(|x1| { x1.order_id() });
-        layers.sort_by_key(|x1| { x1.parent_id() });
+        // layers.sort_by_key(|x1| { x1.order_id() });
+        // layers.sort_by_key(|x1| { x1.parent_id() }); // レイヤーはpsdクレート側で既に表示順に並べられている
 
-        for layer in layers.iter() {
+        for (i, layer) in layers.iter().enumerate() {
             // println!("{}", layer.name());
             let layer_model = Layer {
                 parent_id: layer.parent_id(),
@@ -153,7 +165,8 @@ impl PsdDataExport {
                 width: layer.width(),
                 height: layer.height(),
                 blending_mode: layer.blend_mode() as u8,
-                order_id: layer.order_id(),
+                // order_id: layer.order_id(),
+                order_id: i32::try_from(i).unwrap(),
             };
             layers_json.push(layer_model);
         }
@@ -169,6 +182,13 @@ impl PsdDataExport {
         let layer_json_path = &export_dir_path.join("layers.json");
         fs::write(layer_json_path, serde_json::to_string(&layers_json).unwrap()).unwrap();
 
+        let doc_obj = PsdDoc {
+            psd_width: psd.width(),
+            psd_height: psd.height()
+        };
+        let doc_path = &export_dir_path.join("doc.json");
+        fs::write(doc_path, serde_json::to_string(&doc_obj).unwrap()).unwrap();
+
         // println!("{}", serde_json::to_string(&layers_json).unwrap());
 
         // println!("{}", "--------------------");
@@ -176,7 +196,7 @@ impl PsdDataExport {
         for layer in psd.layers().iter() {
             let layer_name: String = layer.name().to_string();
             let psd_width: u32 = psd.width();
-            let psd_height: u32 = psd.width();
+            let psd_height: u32 = psd.height();
             let layer_width: u32 = layer.width().into();
             let layer_height: u32 = layer.height().into();
             let layer_x: u32 = layer.layer_left() as u32;
@@ -185,8 +205,8 @@ impl PsdDataExport {
             let mut img = RgbaImage::from_raw(psd_width, psd_height, layer.rgba()).unwrap();
             // PSD全体からレイヤー部分のみクロップする
             let layer_image = image::imageops::crop(&mut img, layer_x, layer_y, layer_width, layer_height);
-            let extension = GodotString::to_string(&self.image_extension);
-            let export_image_path = &export_dir_path.join(layer_name + "." + GodotString::to_string(&self.image_extension).as_str());
+            let extension = GString::to_string(&self.image_extension);
+            let export_image_path = &export_dir_path.join(layer_name + "." + GString::to_string(&self.image_extension).as_str());
             match &*extension {
                 "png" => {
                     layer_image
@@ -268,18 +288,24 @@ pub fn init_panic_hook() {
 
         // unsafe {
         //     if let Some(gd_panic_hook) = gdnative::api::utils::autoload::<gdnative::api::Node>("rust_panic_hook") {
-        //         gd_panic_hook.call("rust_panic_hook", &[GodotString::from_str(error_message).to_variant()]);
+        //         gd_panic_hook.call("rust_panic_hook", &[GString::from_str(error_message).to_variant()]);
         //     }
         // }
     }));
 }
 
-fn init(handle: InitHandle) {
-    handle.add_tool_class::<PsdDataExport>();
-    init_panic_hook();
-}
+// fn init(handle: InitHandle) {
+//     handle.add_tool_class::<PsdDataExport>();
+//     init_panic_hook();
+// }
 
-godot_init!(init);
+// godot_init!(init);
+
+#[derive(Serialize, Deserialize, Debug)]
+struct PsdDoc {
+    psd_width : u32,
+    psd_height : u32
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Group {
@@ -313,4 +339,19 @@ struct Layer {
     height: u16,
     blending_mode: u8,
     order_id: i32,
+}
+
+// エントリーポイント
+struct LibEntry;
+
+#[gdextension]
+unsafe impl ExtensionLibrary for LibEntry {
+    fn min_level() -> InitLevel { InitLevel::Core }
+
+    fn on_level_init(level: InitLevel){
+        match level {
+            InitLevel::Core => {init_panic_hook()},
+            _ => {}
+        }
+    }
 }
