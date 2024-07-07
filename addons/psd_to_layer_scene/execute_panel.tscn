@@ -1,235 +1,144 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://c0kmv0nf3apdq"]
 
-[ext_resource path="res://addons/psd_to_layer_scene/psd_layer_scene_native.gdns" type="Script" id=1]
-[ext_resource path="res://addons/psd_to_layer_scene/execute_panel.gd" type="Script" id=2]
+[ext_resource type="Script" path="res://addons/psd_to_layer_scene/execute_panel.gd" id="2"]
 
 [node name="ExecutePanel" type="VBoxContainer"]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="TitleLabel" type="Label" parent="."]
-margin_right = 1024.0
-margin_bottom = 14.0
+layout_mode = 2
 text = "PSDレイヤー画像からPackedSceneファイル(.tscn)を作成"
 
 [node name="HSeparator" type="HSeparator" parent="."]
-margin_top = 18.0
-margin_right = 1024.0
-margin_bottom = 26.0
-custom_constants/separation = 8
+layout_mode = 2
 
 [node name="PsdFilesDirectory" type="HBoxContainer" parent="."]
-margin_top = 30.0
-margin_right = 1024.0
-margin_bottom = 54.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="PsdFilesLabel" type="Label" parent="PsdFilesDirectory"]
-margin_top = 5.0
-margin_right = 510.0
-margin_bottom = 19.0
-rect_min_size = Vector2( 280, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "レイヤーPNG画像を出力するディレクトリ:"
-align = 2
 
 [node name="PsdFilesDirValue" type="LineEdit" parent="PsdFilesDirectory"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 120, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "res://psd/"
 
 [node name="PsdLayersDirectory" type="HBoxContainer" parent="."]
-margin_top = 58.0
-margin_right = 1024.0
-margin_bottom = 82.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="PsdLayersDirLabel" type="Label" parent="PsdLayersDirectory"]
-margin_top = 5.0
-margin_right = 510.0
-margin_bottom = 19.0
-rect_min_size = Vector2( 280, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "レイヤーPNG画像を出力するディレクトリ:"
-align = 2
 
 [node name="PsdLayersDirValue" type="LineEdit" parent="PsdLayersDirectory"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 120, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "res://image/"
 
 [node name="ExportScenesDirectory" type="HBoxContainer" parent="."]
-margin_top = 86.0
-margin_right = 1024.0
-margin_bottom = 110.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ExportScenesDirLabel" type="Label" parent="ExportScenesDirectory"]
-margin_top = 5.0
-margin_right = 510.0
-margin_bottom = 19.0
-rect_min_size = Vector2( 280, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "シーン出力するディレクトリ:"
-align = 2
 
 [node name="ExportScenesDirValue" type="LineEdit" parent="ExportScenesDirectory"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 120, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "res://export_scene/"
 
 [node name="ImageExtension" type="HBoxContainer" parent="."]
-margin_top = 114.0
-margin_right = 1024.0
-margin_bottom = 134.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ImageExtensionLabel" type="Label" parent="ImageExtension"]
-margin_top = 3.0
-margin_right = 510.0
-margin_bottom = 17.0
-rect_min_size = Vector2( 280, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "シーン出力するディレクトリ:"
-align = 2
 
 [node name="ImageExtensionOption" type="OptionButton" parent="ImageExtension"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 20.0
-rect_min_size = Vector2( 120, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
-text = "PNG"
-items = [ "PNG", null, false, 0, null, "Webp", null, false, 1, null, "bmp", null, false, 2, null, "PNG", null, false, 0, null, "Webp", null, false, 1, null, "bmp", null, false, 2, null ]
-selected = 0
 
 [node name="Toolbar" type="VBoxContainer" parent="."]
-margin_top = 138.0
-margin_right = 1024.0
-margin_bottom = 138.0
-rect_min_size = Vector2( 240, 0 )
+layout_mode = 2
 
 [node name="WebPQualityFactor" type="HBoxContainer" parent="."]
-margin_top = 142.0
-margin_right = 1024.0
-margin_bottom = 166.0
+layout_mode = 2
 
 [node name="Control" type="Control" parent="WebPQualityFactor"]
-margin_right = 510.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="QualityFactor2" type="HBoxContainer" parent="WebPQualityFactor"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="IsLossLessCheck" type="CheckBox" parent="WebPQualityFactor/QualityFactor2"]
-margin_right = 111.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
-pressed = true
 text = "is_lossless"
 flat = true
 
 [node name="QualityFactorLabel" type="Label" parent="WebPQualityFactor/QualityFactor2"]
-margin_left = 115.0
-margin_top = 5.0
-margin_right = 395.0
-margin_bottom = 19.0
-rect_min_size = Vector2( 280, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 text = "QualityFactor:"
-align = 2
 
 [node name="QualityFactorSpinBox" type="SpinBox" parent="WebPQualityFactor/QualityFactor2"]
-margin_left = 399.0
-margin_right = 510.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 100, 0 )
+layout_mode = 2
 size_flags_horizontal = 3
 step = 0.01
 value = 75.0
-align = 2
 
 [node name="IsOverwriteLayer" type="HBoxContainer" parent="."]
-margin_top = 170.0
-margin_right = 1024.0
-margin_bottom = 194.0
+layout_mode = 2
 
 [node name="Control" type="Control" parent="IsOverwriteLayer"]
-margin_right = 510.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="IsTimestampCheck" type="CheckBox" parent="IsOverwriteLayer"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
 text = "is_timestamp_check"
 flat = true
 
 [node name="IsOverwriteLayerCheck" type="CheckBox" parent="IsOverwriteLayer"]
 visible = false
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
-pressed = true
 text = "同名レイヤー画像を上書きする"
 flat = true
 
 [node name="IsOverwriteScene" type="HBoxContainer" parent="."]
-margin_top = 198.0
-margin_right = 1024.0
-margin_bottom = 222.0
+layout_mode = 2
 
 [node name="Control" type="Control" parent="IsOverwriteScene"]
-margin_right = 510.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="IsOverwriteSceneCheck" type="CheckBox" parent="IsOverwriteScene"]
-margin_left = 514.0
-margin_right = 1024.0
-margin_bottom = 24.0
+layout_mode = 2
 size_flags_horizontal = 3
-pressed = true
 text = "同名シーンを上書きする"
 flat = true
 
 [node name="ResultLogLabel" type="Label" parent="."]
-margin_top = 226.0
-margin_right = 1024.0
-margin_bottom = 250.0
-rect_min_size = Vector2( 0, 24 )
+layout_mode = 2
 
 [node name="ExecuteButton" type="Button" parent="."]
-margin_top = 254.0
-margin_right = 1024.0
-margin_bottom = 286.0
-rect_min_size = Vector2( 0, 32 )
+layout_mode = 2
 text = "シーン作成！"
 
-[node name="Tween" type="Tween" parent="."]
-
-[node name="PsdDataExport" type="Node" parent="."]
-script = ExtResource( 1 )
-psd_dir = ""
-export_dir = ""
-is_overwrite = false
-ignore_file_paths = PoolStringArray(  )
-image_extension = ""
-quality_factor = 0.0
+[node name="PsdDataExport" type="PsdDataExport" parent="."]
