@@ -173,18 +173,18 @@ impl PsdDataExport {
         }
 
         // ドキュメント全体のレイヤー等名の重複チェック
-        if Self::get_export_option_value(export_options, "append_suffix_by_order", false) {
+        if !Self::get_export_option_value(export_options, "append_suffix_by_order", false) {
             let mut doc_member_names : std::collections::HashSet<String> = std::collections::HashSet::new();
             for group in groups.iter() {
                 let group_name_string : String = group.name().to_string();
                 if !doc_member_names.insert(group_name_string) { // insert で存在確認する
-                    panic!("Duplicated name of Layer or Group in a document is not allowed unless append_suffix_by_order is enabled."); 
+                    panic!("Duplicated name of Layer or Group in a document is not allowed unless append_suffix_by_order is enabled. duplicated name: {}", group.name().to_string()); 
                 }
             }
             for layer in layers.iter() {
                 let layer_name_string : String = layer.name().to_string();
                 if !doc_member_names.insert(layer_name_string) { // insert で存在確認する
-                    panic!("Duplicated name of Layer or Group in a document is not allowed unless append_suffix_by_order is enabled."); 
+                    panic!("Duplicated name of Layer or Group in a document is not allowed unless append_suffix_by_order is enabled. duplicated name: {}", layer.name().to_string()); 
                 } 
             }
         }
@@ -197,7 +197,7 @@ impl PsdDataExport {
             let parent_id_as_usize = usize::try_from(parent_id).unwrap();
             let group_name_string : String = group.name().to_string();
             if !groups_member_names[parent_id_as_usize].insert(group_name_string) { // insert で存在確認する
-                panic!("Duplicated name of Layer or Group in a same group is not allowed."); 
+                panic!("Duplicated name of Layer or Group in a same group is not allowed. duplicated name: {}", group.name().to_string()); 
             }
         }
         for layer in layers.iter() {
@@ -205,7 +205,7 @@ impl PsdDataExport {
             let parent_id_as_usize = usize::try_from(parent_id).unwrap();
             let layer_name_string : String = layer.name().to_string();
             if !groups_member_names[parent_id_as_usize].insert(layer_name_string) { // insert で存在確認する
-                panic!("Duplicated name of Layer or Group in a same group is not allowed."); 
+                panic!("Duplicated name of Layer or Group in a same group is not allowed. duplicated name: {}", layer.name().to_string()); 
             }
         }
 
