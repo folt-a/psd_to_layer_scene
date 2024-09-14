@@ -2,7 +2,7 @@
 extends VBoxContainer
 
 const ADDONS_PATH: String = "res://addons"
-@onready var psd_data_export: PsdDataExport = $PsdDataExport
+@onready var psd_data_export: Node = $PsdDataExport
 
 @onready var S = load("res://addons/psd_to_layer_scene/translation/translation.gd").get_translation_singleton(
 	self
@@ -25,16 +25,16 @@ var _psd_timestamps: Dictionary = {}
 
 @onready var web_p_quality_factor: HBoxContainer = $WebPQualityFactor
 
-@onready var psd_files_dir_value: LineEdit = $PsdFilesDirectory/PsdFilesDirValue
-@onready var psd_layers_dir_value: LineEdit = $PsdLayersDirectory/PsdLayersDirValue
-@onready var export_scenes_dir_value: LineEdit = $ExportScenesDirectory/ExportScenesDirValue
-@onready var image_extension_option: OptionButton = $ImageExtension/ImageExtensionOption
-@onready var is_loss_less_check: CheckBox = $WebPQualityFactor/QualityFactor2/IsLossLessCheck
-@onready var quality_factor_spin_box: SpinBox = $WebPQualityFactor/QualityFactor2/QualityFactorSpinBox 
-@onready var is_timestamp_check: CheckBox = $IsOverwriteLayer/IsTimestampCheck
-@onready var is_overwrite_layer_check: CheckBox = $IsOverwriteLayer/IsOverwriteLayerCheck
-@onready var is_overwrite_scene_check: CheckBox = $IsOverwriteScene/IsOverwriteSceneCheck
-@onready var append_suffix_by_order_check: CheckBox = $AppendSuffixScene/AppendSuffixCheck
+@@onready var psd_files_dir_value: LineEdit = $PsdFilesDirectory/PsdFilesDirValue
+@@onready var psd_layers_dir_value: LineEdit = $PsdLayersDirectory/PsdLayersDirValue
+@@onready var export_scenes_dir_value: LineEdit = $ExportScenesDirectory/ExportScenesDirValue
+@@onready var image_extension_option: OptionButton = $ImageExtension/ImageExtensionOption
+@@onready var is_loss_less_check: CheckBox = $WebPQualityFactor/QualityFactor2/IsLossLessCheck
+@@onready var quality_factor_spin_box: SpinBox = $WebPQualityFactor/QualityFactor2/QualityFactorSpinBox 
+@@onready var is_timestamp_check: CheckBox = $IsOverwriteLayer/IsTimestampCheck
+@@onready var is_overwrite_layer_check: CheckBox = $IsOverwriteLayer/IsOverwriteLayerCheck
+@@onready var is_overwrite_scene_check: CheckBox = $IsOverwriteScene/IsOverwriteSceneCheck
+@@onready var append_suffix_by_order_check: CheckBox = $AppendSuffixScene/AppendSuffixCheck
 @onready var execute_button: Button = $ExecuteButton
 func init() -> void:
 	quality_factor_spin_box.value_changed.connect(_on_quality_factor_spin_box_value_changed)
