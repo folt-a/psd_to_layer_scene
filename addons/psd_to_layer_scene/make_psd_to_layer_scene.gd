@@ -5,6 +5,11 @@ const PsdNode = preload("./psd_node.gd")
 @export var _layer_images_dir_path: String
 @export var _save_dir_path: String
 @export var _is_overwrite: bool
+const PsdNode = preload("./psd_node.gd")
+
+@export var _layer_images_dir_path: String
+@export var _save_dir_path: String
+@export var _is_overwrite: bool
 var S
 
 var _layer_groups: Dictionary = {}
@@ -13,6 +18,10 @@ var _root_name: String
 var _extension:String
 var _filesystem: EditorFileSystem
 
+#regoin Options
+var _append_suffix_by_order : bool
+
+#endregion
 
 func _init(
 	_S,
@@ -20,7 +29,8 @@ func _init(
 	save_dir_path: String,
 	is_overwrite: bool,
 	extension:String,
-	filesystem: EditorFileSystem
+	filesystem: EditorFileSystem,
+	options : Dictionary = {}
 ) -> void:
 	S = _S
 	_layer_images_dir_path = layer_image_dir_path
@@ -29,7 +39,15 @@ func _init(
 	_filesystem = filesystem
 	_extension = extension
 
+	_extract_options_from_dic(options)
+
+
+func _extract_options_from_dic(option_dic : Dictionary) -> void:
+	_append_suffix_by_order = option_dic.get(&"append_suffix_by_order", false)
+
+
 func execute() -> int:
+	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
 	print(S.tr("_batchstart"))
 
@@ -37,6 +55,8 @@ func execute() -> int:
 	if !_layer_images_dir_path.ends_with("/"):
 		_layer_images_dir_path = _layer_images_dir_path + "/"
 
+	var dir := DirAccess.open(_layer_images_dir_path)
+	if dir == null:
 	var dir := DirAccess.open(_layer_images_dir_path)
 	if dir == null:
 		printerr(S.tr("_cantfindpsddir"))
@@ -53,13 +73,18 @@ func execute() -> int:
 	# 対象となるPSDファイルパス名をディレクトリから取り出す
 	# var layer_images_dir := Directory.new()
 	var layer_images_dir := DirAccess.open(_layer_images_dir_path)
+	# var layer_images_dir := Directory.new()
+	var layer_images_dir := DirAccess.open(_layer_images_dir_path)
 	var json_paths: Array = []
+	if layer_images_dir != null:
 	if layer_images_dir != null:
 		layer_images_dir.list_dir_begin()
 		var file_name = layer_images_dir.get_next()
 		while file_name != "":
 			if layer_images_dir.current_is_dir():
 				if (
+					FileAccess.file_exists(_layer_images_dir_path + "/" + file_name + "/layers.json")
+					and FileAccess.file_exists(_layer_images_dir_path + "/" + file_name + "/groups.json")
 					FileAccess.file_exists(_layer_images_dir_path + "/" + file_name + "/layers.json")
 					and FileAccess.file_exists(_layer_images_dir_path + "/" + file_name + "/groups.json")
 				):
@@ -76,6 +101,7 @@ func execute() -> int:
 #	リソース更新後、インポート完了を待つ
 	_filesystem.scan()
 	await _filesystem.filesystem_changed
+	await _filesystem.filesystem_changed
 
 	for json_path_v in json_paths:
 		var json_path := (json_path_v) as String
@@ -83,12 +109,27 @@ func execute() -> int:
 
 #		上書き禁止で上書き対象ファイルがあるならスキップする
 		if not _is_overwrite and FileAccess.file_exists(_save_dir_path + _root_name.to_lower() + ".tscn"):
+		if not _is_overwrite and FileAccess.file_exists(_save_dir_path + _root_name.to_lower() + ".tscn"):
 			continue
 
 #		print_debug(result)
 		_root_node_2d = PsdNode.new()
+		_root_node_2d = PsdNode.new()
 		_root_node_2d.name = _root_name.to_upper()
 		
+		# ドキュメント情報の書き込み
+		if true:
+			var file_doc_json := FileAccess.open(json_path + "doc.json", FileAccess.READ)
+			var doc_json_text := file_doc_json.get_as_text()
+			var json := JSON.new()
+			var doc_parse_error : Error = json.parse(doc_json_text)
+			if doc_parse_error != OK:
+				printerr(doc_parse_error)
+				printerr(error_string(doc_parse_error))
+			var doc_parsed : Dictionary = json.data
+			var psd_width : int = doc_parsed["psd_width"]
+			var psd_height: int = doc_parsed["psd_height"]
+			_root_node_2d.psd_size = Vector2i(psd_width, psd_height)
 		# ドキュメント情報の書き込み
 		if true:
 			var file_doc_json := FileAccess.open(json_path + "doc.json", FileAccess.READ)
@@ -124,8 +165,40 @@ func execute() -> int:
 				_layer_groups[group.id] = group
 				# Group Node 作成
 				self.set_group_node(group)
+		# file.open(json_path + "groups.json", File.READ)
+		if true:
+			var file_groups_json := FileAccess.open(json_path + "groups.json", FileAccess.READ)
+			var groups_json_text: String = file_groups_json.get_as_text()
+			var json := JSON.new()
+			var groups_parse_error: Error = json.parse(groups_json_text)
+			if groups_parse_error != OK:
+				printerr(groups_parse_error)
+				printerr(error_string(groups_parse_error))
+			var group_json_result: Array = json.data
+			for group in group_json_result:
+				_layer_groups[group.id] = group
+				# Group Node 作成
+				self.set_group_node(group)
 
 		# layer.jsonを読み取ってなんやかんやする
+		if true:
+			var file_layers_json := FileAccess.open(json_path + "layers.json", FileAccess.READ)
+			var layers_json_text: String = file_layers_json.get_as_text()
+			var json := JSON.new()
+			var layers_parse_error := json.parse(layers_json_text)
+			# var layers_parse_result: JSONParseResult = JSON.parse(layers_json_text)
+			if layers_parse_error != OK:
+				printerr(layers_parse_error)
+				printerr(error_string(layers_parse_error))
+			var layer_json_result: Array = json.data
+			layer_json_result.reverse()
+			for layer in layer_json_result:
+				# Layer Node 作成
+				self.set_layer_node(layer)
+				pass
+
+		traverse_and_set_global_order(_root_node_2d)
+		node_children_sort(_root_node_2d) 
 		if true:
 			var file_layers_json := FileAccess.open(json_path + "layers.json", FileAccess.READ)
 			var layers_json_text: String = file_layers_json.get_as_text()
@@ -159,6 +232,7 @@ func execute() -> int:
 		var scene = PackedScene.new()
 		var packed_result = scene.pack(_root_node_2d)
 		if packed_result == OK:
+			ResourceSaver.save(scene, _save_dir_path + _root_node_2d.name.to_lower() + ".tscn")
 			ResourceSaver.save(scene, _save_dir_path + _root_node_2d.name.to_lower() + ".tscn")
 		print("[Output] " + _save_dir_path + _root_node_2d.name.to_lower() + ".tscn")
 		_root_node_2d.queue_free()
@@ -202,6 +276,7 @@ func set_layer_node(json_value: Dictionary):
 	if json_value.name.to_upper().ends_with("_AP"):
 #	or json_value.path.to_upper().ends_with("_AP"):
 		layer_node = Sprite2D.new()
+		layer_node = Sprite2D.new()
 		top = json_value.top
 		left = json_value.left
 		parent_node.add_child(layer_node)
@@ -227,12 +302,13 @@ func set_layer_node(json_value: Dictionary):
 #		skelton.set_owner(_root_node_2d)
 	else:
 		layer_node = Sprite2D.new()
+		layer_node = Sprite2D.new()
 		top = json_value.top + (float(json_value.height) / 2.0)
 		left = json_value.left + (float(json_value.width) / 2.0)
 		parent_node.add_child(layer_node)
 
 
-	var tex_path = _layer_images_dir_path + "/" + _root_name + "/" + json_value.name + "." + _extension
+	var tex_path : String = _layer_images_dir_path + "/" + _root_name + "/" + json_value.name + (("_%04d" % json_value.order_id) if _append_suffix_by_order else "") + "." + _extension
 	layer_node.texture = load(tex_path)
 	layer_node.name = json_value.name
 	layer_node.visible = !json_value.visible # なぜか反転でjsonに入ってる
@@ -271,7 +347,7 @@ func get_group_node_by_id(parent_id) -> Node2D:
 			var id: int = 0
 			if group_node.has_meta("group_id") and group_node.get_meta("group_id") == parent_id:
 				return group_node
-	assert(false)
+	assert(false, "failed to find group. parent_id: %s" % parent_id)
 	return null
 
 
@@ -345,6 +421,7 @@ func node_children_sort(node: Node):
 	if node.get_child_count() <= 0:
 		return
 	var children: Array = node.get_children()
+	children.sort_custom(sort_order_id)
 	children.sort_custom(sort_order_id)
 #	print(children)
 	# すべて外すんだ

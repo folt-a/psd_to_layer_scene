@@ -9,6 +9,7 @@ is_loss_less_check,Lossless,Lossless(品質劣化なし、可逆)
 is_overwrite_layer_check,Overwrite Image,同名レイヤー画像を上書きする
 is_overwrite_scene_check,Overwrite Scene,同名シーンを上書きする
 is_timestamp_check,ignore PSD files with the same modification timestamp,PSDファイルの更新日時が同じファイルは無視する
+append_suffix_by_order,Append layer name suffix by its layer order id,レイヤー画像のファイル名の後ろに順序番号を付ける
 execute_button,Create Scenes,シーン作成！
 _psdtoimage,[Convert] Converting PSD to Layer Images... ,PSDを画像に変換中です...
 _psdtoimagecompleted,[Convert] Completed Convert PSD to Layer Images. ,PSDを画像に変換完了しました。
