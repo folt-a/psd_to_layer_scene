@@ -30,10 +30,11 @@ var _psd_timestamps: Dictionary = {}
 @onready var export_scenes_dir_value: LineEdit = $ExportScenesDirectory/ExportScenesDirValue
 @onready var image_extension_option: OptionButton = $ImageExtension/ImageExtensionOption
 @onready var is_loss_less_check: CheckBox = $WebPQualityFactor/QualityFactor2/IsLossLessCheck
-@onready var quality_factor_spin_box: SpinBox = $WebPQualityFactor/QualityFactor2/QualityFactorSpinBox
+@onready var quality_factor_spin_box: SpinBox = $WebPQualityFactor/QualityFactor2/QualityFactorSpinBox 
 @onready var is_timestamp_check: CheckBox = $IsOverwriteLayer/IsTimestampCheck
 @onready var is_overwrite_layer_check: CheckBox = $IsOverwriteLayer/IsOverwriteLayerCheck
 @onready var is_overwrite_scene_check: CheckBox = $IsOverwriteScene/IsOverwriteSceneCheck
+@onready var append_suffix_by_order_check: CheckBox = $AppendSuffixScene/AppendSuffixCheck
 @onready var execute_button: Button = $ExecuteButton
 func init() -> void:
 	quality_factor_spin_box.value_changed.connect(_on_quality_factor_spin_box_value_changed)
@@ -64,6 +65,7 @@ func init() -> void:
 	is_overwrite_layer_check.text = S.tr("is_overwrite_layer_check")
 	is_overwrite_scene_check.text = S.tr("is_overwrite_scene_check")
 	is_timestamp_check.text = S.tr("is_timestamp_check")
+	append_suffix_by_order_check.text = S.tr("append_suffix_by_order")
 	execute_button.text = S.tr("execute_button")
 
 	_setting_load()
@@ -189,7 +191,8 @@ func _on_execute_button_pressed_inner():
 	result_log_label.text = S.tr("_psdtoimage")
 	print("[Start] " + S.tr("_psdtoimage"))
 	await RenderingServer.frame_post_draw
-	psd_data_export.execute()
+	var option_dic : Dictionary = { &"append_suffix_by_order": append_suffix_by_order_check.button_pressed }
+	psd_data_export.execute(option_dic)
 	print("[End] " + S.tr("_psdtoimagecompleted"))
 	
 	var batch_script = _make_psd_layer_script.new(
@@ -198,7 +201,8 @@ func _on_execute_button_pressed_inner():
 		export_scenes_dir_value.text,
 		is_overwrite_layer_check.button_pressed,
 		extension,
-		filesystem
+		filesystem,
+		option_dic
 	)
 	
 	result_log_label.text = S.tr("_createscene")

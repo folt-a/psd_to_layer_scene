@@ -134,6 +134,19 @@ size_flags_horizontal = 3
 text = "同名シーンを上書きする"
 flat = true
 
+[node name="AppendSuffixScene" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="AppendSuffixScene"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AppendSuffixCheck" type="CheckBox" parent="AppendSuffixScene"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "append_suffix_by_order"
+flat = true
+
 [node name="ResultLogLabel" type="Label" parent="."]
 layout_mode = 2
 

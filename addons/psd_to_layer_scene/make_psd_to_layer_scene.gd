@@ -13,6 +13,10 @@ var _root_name: String
 var _extension:String
 var _filesystem: EditorFileSystem
 
+#regoin Options
+var _append_suffix_by_order : bool
+
+#endregion
 
 func _init(
 	_S,
@@ -20,7 +24,8 @@ func _init(
 	save_dir_path: String,
 	is_overwrite: bool,
 	extension:String,
-	filesystem: EditorFileSystem
+	filesystem: EditorFileSystem,
+	options : Dictionary = {}
 ) -> void:
 	S = _S
 	_layer_images_dir_path = layer_image_dir_path
@@ -28,6 +33,13 @@ func _init(
 	_is_overwrite = is_overwrite
 	_filesystem = filesystem
 	_extension = extension
+
+	_extract_options_from_dic(options)
+
+
+func _extract_options_from_dic(option_dic : Dictionary) -> void:
+	_append_suffix_by_order = option_dic.get(&"append_suffix_by_order", false)
+
 
 func execute() -> int:
 	await RenderingServer.frame_post_draw
@@ -232,7 +244,7 @@ func set_layer_node(json_value: Dictionary):
 		parent_node.add_child(layer_node)
 
 
-	var tex_path = _layer_images_dir_path + "/" + _root_name + "/" + json_value.name + "." + _extension
+	var tex_path : String = _layer_images_dir_path + "/" + _root_name + "/" + json_value.name + (("_%04d" % json_value.order_id) if _append_suffix_by_order else "") + "." + _extension
 	layer_node.texture = load(tex_path)
 	layer_node.name = json_value.name
 	layer_node.visible = !json_value.visible # なぜか反転でjsonに入ってる
@@ -271,7 +283,7 @@ func get_group_node_by_id(parent_id) -> Node2D:
 			var id: int = 0
 			if group_node.has_meta("group_id") and group_node.get_meta("group_id") == parent_id:
 				return group_node
-	assert(false)
+	assert(false, "failed to find group. parent_id: %s" % parent_id)
 	return null
 
 
@@ -326,7 +338,7 @@ func traverse_and_set_global_order(root_node : Node) -> void:
 
 func _fetch_and_set_global_order(element_node : Node) -> int:
 	if element_node.get_child_count() <= 0: # クループでない
-		if element_node is Sprite2D:
+		if not element_node is Sprite2D:
 			push_warning("Empty Layer Group is found. Empty Layer Group will always be at the last in a group it belong.")
 		return element_node.get_meta(&"order_id")
 
